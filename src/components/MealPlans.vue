@@ -35,6 +35,7 @@
                             no-title
                             scrollable
                             >
+
                                 <v-spacer></v-spacer>
                                 <v-btn
                                     text
@@ -46,7 +47,7 @@
                                 <v-btn
                                     text
                                     color="primary"
-                                    @click="$refs.menu.save(date)"
+                                    @click="datePick(date)"
                                 >
                                     OK
                                 </v-btn>
@@ -192,6 +193,8 @@
 </template>
 
 <script>
+import { doc, getDoc } from "firebase/firestore"; 
+import { db as fsdb } from '../fb'
   export default {
     data () {
         return {
@@ -249,6 +252,18 @@
     methods: {
       // Create an array the length of our items
       // with all values as true
+     async  datePick(date) {
+        console.log(date)
+        // const uid = sessionStorage.getItem('uid')
+        const infoCol1 = doc(fsdb, "mealPlans",'8PXKw6RPwgd5TSO0CAj2H4Eec7I2','userMealPlan',date)
+        const docSnap2 = await getDoc(infoCol1)
+
+        if (docSnap2.exists()) {
+            console.log('exists-->',docSnap2.data())
+        }else{
+            console.log('No data on given date for this user')
+        }
+    },
       all () {
         this.panel = [...Array(this.items).keys()].map((k, i) => i)
       },
