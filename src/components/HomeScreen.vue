@@ -17,9 +17,7 @@
                         <th class="text-left">
                             Maintainace Target
                         </th>
-                        <th class="text-left">
-                            Plan Targets
-                        </th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -29,113 +27,29 @@
                         >
                         <td>{{ item.name }}</td>
                         <td>{{ item.maintainace }}</td>
-                        <td>{{ item.planned }}</td>
+
                         </tr>
                     </tbody>
                     </template>
                 </v-simple-table>
             </v-col>
             <v-col>
-                <!-- this second col will display the calendar -->
-                <template>
-                    <v-row class="fill-height">
-                        <v-col>
-                            <v-sheet height="64"
-                            elevation="0">
-                                <v-toolbar>
-                                    <!-- Set up button for today -->
-                                    <v-btn outlined
-                                    class="mr-4"
-                                    color="grey darken-2"
-                                    @click="setToday">
-                                        Today
-                                    </v-btn>
-                                    <!-- Set up return back to dates -->
-                                    <v-btn
-                                    fab
-                                    text
-                                    small
-                                    color="grey darken-2"
-                                    @click="prev">
-                                        <v-icon small>
-                                            mdi-chevron-left
-                                        </v-icon>
-                                    </v-btn>
-                                    <!-- Set up advance to dates -->
-                                    <v-btn
-                                    fab
-                                    text
-                                    small
-                                    color="grey darken-2"
-                                    @click="next">
-                                        <v-icon small>
-                                            mdi-chevron-right
-                                        </v-icon>
-                                    </v-btn>
-                                    <!-- Here is the title of the calendar based on the displayed month-->
-                                    <v-toolbar-title v-if="$refs.calendar">
-                                        {{ $refs.calendar.title }}
-                                    </v-toolbar-title>
-                                    <v-spacer></v-spacer>
-                                    <!-- Set up a click menu that allows for you to click and change the calendar range -->
-                                    <template>
-                                        <div class="text-center">
-                                            <v-menu 
-                                            offset-y
-                                            bottom
-                                            right>
-                                                <template v-slot:activator="{ on, attrs }">
-                                                    <v-btn
-                                                        outlined
-                                                        color="grey darken-2"
-                                                        dark
-                                                        v-bind="attrs"
-                                                        v-on="on"
-                                                        >
-                                                            <span>{{ typeToLable[type] }}</span>
-                                                            <v-icon right>
-                                                                mdi-menu-down
-                                                            </v-icon>
-                                                    </v-btn>
-                                                </template>
-                                                <v-list>
-                                                    <v-list-item @click="type = 'day'">
-                                                        <v-list-item-title>Day</v-list-item-title>
-                                                    </v-list-item>
-                                                    <v-list-item @click="type = 'week'">
-                                                        <v-list-item-title>Week</v-list-item-title>
-                                                    </v-list-item>
-                                                    <v-list-item @click="type = 'month'">
-                                                        <v-list-item-title>Month</v-list-item-title>
-                                                    </v-list-item>
-                                                    <v-list-item @click="type = '4day'">
-                                                        <v-list-item-title>4 Day</v-list-item-title>
-                                                    </v-list-item>
-                                                </v-list>
-                                            </v-menu>
-                                        </div>
-                                    </template>
-                                </v-toolbar>
-                            </v-sheet>
-                            <!-- Set up the actual calendar, so start with a sheet -->
-                            <v-sheet height="300">
-                                <v-calendar
-                                ref="calendar"
-                                v-model="focus"
-                                color="primary"
-                                :events="events"
-                                :event-color="getEventColor"
-                                :type="type"
-                                @click:event="showEvent"
-                                @click:more="viewDay"
-                                @click:date="viewDay"
-                                @change="updateRange">
-                                </v-calendar>
-                                <!-- Get a menu when ever you click on an even -->
-                            </v-sheet>
-                        </v-col>
-                    </v-row>
-                </template>
+                <!-- this second col will display the calendar <v-date-picker
+        v-model="date1"
+        :events="arrayEvents"
+        event-color="green lighten-1"
+      ></v-date-picker> -->
+               <template>
+               <v-date-picker
+        v-model="date2"
+        :events="functionEvents"
+        event-color="date => date[9] % 2 ? 'red' : 'yellow'"
+      ></v-date-picker>
+
+            
+
+            
+      </template>
             </v-col>
         </v-row>
         <!-- the second row will also divied into two cols -->
@@ -173,29 +87,7 @@
                     </v-sheet>
                 </template>
             </v-col>
-            <v-col>
-                <!-- this second col will display the meals for selected day on a carousel-->
-                <v-carousel
-                cycle
-                height="200"
-                hide-delimiter-background>
-                    <v-carousel-item v-for="(slide, i) in dayCarousel"
-                    :key="i">
-                        <v-sheet
-                        :color="slide.color"
-                        height="100%">
-                            <v-row
-                            class="fill-height"
-                            align="center"
-                            justify="center">
-                                <div>
-                                    {{slide.slideHeading}}
-                                </div>
-                            </v-row>
-                        </v-sheet>
-                    </v-carousel-item>
-                </v-carousel>
-            </v-col>
+
         </v-row>
             
     
@@ -203,18 +95,25 @@
 </template>
 
 <script>
+        console.log('hyyyy-->',sessionStorage.getItem('maintenceTarget'));
+        const maint = sessionStorage.getItem('maintenceTarget');
     export default {
         data: () =>({
+            arrayEvents: [],
+            arrayEvents1:[],
+            arrayEvents2:[],
+            date1: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+            date2: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10), 
+            maintainace:sessionStorage.getItem('maintenceTarget'),
             headers: [
                 {text: 'Macronutrient',align: 'start',sortable: false,value: 'name',},
                 {text: 'Maintainace Target', value: 'maintainace'},
                 {text: 'Plan Targets', value: 'planned' },
             ],
             targets:[
-                {name: 'Energy (Calories)', maintainace: 159, planned: 6.0,},
-                {name: 'Protein (g)', maintainace: 237, planned: 9.0,},
-                {name: 'Fat (g)', maintainace: 262, planned: 16.0,},
-                {name: 'Carbs(g)', maintainace: 305, planned: 3.7,},
+
+                {name: 'Energy (Calories)', maintainace: maint,},
+
             ],
             focus:'',
             type: 'month',
@@ -239,9 +138,38 @@
             ],
         }),
         mounted(){
-            this.$refs.calendar.checkChange()
+            console.log('Hello')
+            const mealDates1 = sessionStorage.getItem('mealDates')
+            const groceryDate1 = sessionStorage.getItem('groceryDate')
+            console.log('mealDates1-->',mealDates1)    
+            console.log('groceryDate1-->',groceryDate1)    
+            var m = mealDates1.split(',')  
+            var g = groceryDate1.split(',')
+            console.log('g-->',g)  
+        for (let i = 0; i < m.length; i++) {
+            this.arrayEvents.push(m[i])
+            this.arrayEvents1.push(parseInt(m[i][8]+m[i][9]))
+            console.log('typeof-->',parseInt(m[i][8]+m[i][9]))
+        }
+        for (let j = 0; j < g.length; j++) {
+            // this.arrayEvents.push(m[i])
+            console.log(g[j][8]+g[j][9])
+            this.arrayEvents2.push(parseInt(g[j][8]+g[j][9]))
+            // console.log('typeof-->',parseInt(m[i][8]+m[i][9]))
+        }
+        console.log('this.arrayEvents-->',this.arrayEvents)
+        console.log('this.arrayEvents1->',this.arrayEvents1)
+        console.log('this.arrayEvents2->',this.arrayEvents2)
         },
         methods:{
+            functionEvents (date) {
+
+            const [,, day] = date.split('-')
+            if (this.arrayEvents1.includes(parseInt(day, 10))) return ['green' ]
+            if (this.arrayEvents2.includes(parseInt(day, 10))) return ['yellow']
+            return false
+        
+      },
             viewDay ({ date }){
                 this.focus = date
                 this.type = 'day'

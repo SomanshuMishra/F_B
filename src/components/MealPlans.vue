@@ -62,11 +62,9 @@
                         width="100%"
                         >
                             <v-expansion-panel
-                                v-for="(item,i) in items"
-                                :key="i"
                                 width="100"
                             >
-                                <v-expansion-panel-header>{{ item }}</v-expansion-panel-header>
+                                <v-expansion-panel-header>Breakast</v-expansion-panel-header>
                                 <v-expansion-panel-content>
                                 <!-- checkable table data -->
                                 <v-data-table
@@ -75,16 +73,101 @@
                                     :items="desserts"
                                     :single-select="singleSelect"
                                     item-key="name"
-                                    show-select
+                                   
                                     class="elevation-1"
                                     hide-default-footer
                                 >
+
                                     <template v-slot:top>
                                     </template>
                                 </v-data-table>
                                 </v-expansion-panel-content>
                             </v-expansion-panel>
                         </v-expansion-panels>
+                        <v-expansion-panels
+                        v-model="panel"
+                        multiple
+                        width="100%"
+                        >
+                            <v-expansion-panel
+                                width="100"
+                            >
+                                <v-expansion-panel-header>Lunch</v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                <!-- checkable table data -->
+                                <v-data-table
+                                    v-model="selected"
+                                    :headers="headers"
+                                    :items="dessertsLunch"
+                                    :single-select="singleSelect"
+                                    item-key="name"      
+                                    class="elevation-1"
+                                    hide-default-footer
+                                >
+
+                                    <template v-slot:top>
+                                    </template>
+                                </v-data-table>
+                                </v-expansion-panel-content>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
+                        <v-expansion-panels
+                        v-model="panel"
+                        multiple
+                        width="100%"
+                        >
+                            <v-expansion-panel
+                                width="100"
+                            >
+                                <v-expansion-panel-header>Snack</v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                <!-- checkable table data -->
+                                <v-data-table
+                                    v-model="selected"
+                                    :headers="headers"
+                                    :items="dessertsSnack"
+                                    :single-select="singleSelect"
+                                    item-key="name"
+                                   
+                                    class="elevation-1"
+                                    hide-default-footer
+                                >
+
+                                    <template v-slot:top>
+                                    </template>
+                                </v-data-table>
+                                </v-expansion-panel-content>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
+                        <v-expansion-panels
+                        v-model="panel"
+                        multiple
+                        width="100%"
+                        >
+                            <v-expansion-panel
+                                width="100"
+                            >
+                                <v-expansion-panel-header>Dinner</v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                <!-- checkable table data -->
+                                <v-data-table
+                                    v-model="selected"
+                                    :headers="headers"
+                                    :items="dessertsDinner"
+                                    :single-select="singleSelect"
+                                    item-key="name"
+                                   
+                                    class="elevation-1"
+                                    hide-default-footer
+                                >
+
+                                    <template v-slot:top>
+                                    </template>
+                                </v-data-table>
+                                </v-expansion-panel-content>
+                            </v-expansion-panel>
+                        </v-expansion-panels>
+                        
                     </v-row>
                 </v-card>
             </v-col>
@@ -138,6 +221,24 @@
                 </v-sheet>
             </v-col> -->
         </v-row>
+
+         <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="user in users" :key="user.id">
+                    <td>{{user.firstName}} {{user.lastName}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.role}}</td>
+                </tr>
+            </tbody>
+        </table>
+
         <v-row style="margin: 20px 0px;">
             <!-- this row will contain  planned totals-->
             <v-card
@@ -195,9 +296,9 @@
 <script>
 import { doc, getDoc } from "firebase/firestore"; 
 import { db as fsdb } from '../fb'
-  export default {
-    data () {
-        return {
+ 
+ let dataList =  {
+           
             panel: [],
             items: ["Breakfast", "Lunch", "Dinner", "Snacks"],
             singleSelect: false,
@@ -217,7 +318,7 @@ import { db as fsdb } from '../fb'
             desserts: [
           {
             name: 'Frozen Yogurt',
-            calories: 159,
+            calories: 157,
             fat: 6.0,
             carbs: 24,
             protein: 4.0,
@@ -247,19 +348,121 @@ import { db as fsdb } from '../fb'
             protein: 4.3,
             iron: '8%',
           },],
-        }
-    },
+        dessertsLunch:[
+                      {
+            name: 'Frozen Yogurt',
+            calories: 157,
+            fat: 6.0,
+            carbs: 24,
+            protein: 4.0,
+            iron: '1%',
+          },
+        ],
+        dessertsSnacks:[
+                      {
+            name: 'Frozen Yogurt',
+            calories: 157,
+            fat: 6.0,
+            carbs: 24,
+            protein: 4.0,
+            iron: '1%',
+          },
+        ],
+        dessertsDinner:[
+                      {
+            name: 'Frozen Yogurt',
+            calories: 157,
+            fat: 6.0,
+            carbs: 24,
+            protein: 4.0,
+            iron: '1%',
+          },
+        ],
+         
+         
+        };
+
+  export default {
     methods: {
       // Create an array the length of our items
       // with all values as true
      async  datePick(date) {
         console.log(date)
-        // const uid = sessionStorage.getItem('uid')
-        const infoCol1 = doc(fsdb, "mealPlans",'8PXKw6RPwgd5TSO0CAj2H4Eec7I2','userMealPlan',date)
+        const uid = sessionStorage.getItem('uid')
+        const infoCol1 = doc(fsdb, "mealPlans",uid,'userMealPlan',date)
         const docSnap2 = await getDoc(infoCol1)
-
+       
         if (docSnap2.exists()) {
-            console.log('exists-->',docSnap2.data())
+            //console.log('exists-->',docSnap2.data().breakfast.iNames)
+            console.log('exists-->',docSnap2.data().breakfast.iNames);
+            // data.desserts = docSnap2.data().breakfast.iNames;
+            // console.log( data.desserts )
+            dataList = docSnap2.data();
+            console.log("Data" ,dataList);
+            var objectA = {
+                panel: [],
+                items: ["Breakfast", "Lunch", "Dinner", "Snacks"],
+                singleSelect: false,
+                selected: [],
+             headers: [
+            {
+                text: 'Dessert (100g serving)',
+                align: 'start',
+                sortable: false,
+                value: 'name',
+            },
+            { text: 'Calories', value: 'calories' },
+            { text: 'Fat (g)', value: 'fat' },
+            { text: 'Carbs (g)', value: 'carbs' },
+            { text: 'Protein (g)', value: 'protein' },
+            ],
+          desserts: [
+          {
+            name: [docSnap2.data().breakfast.recipeName].toString(),
+            calories: docSnap2.data().breakfast.totalCalories,
+            fat: docSnap2.data().breakfast.fatsTotal,
+            carbs: docSnap2.data().breakfast.carbTotal,
+            protein: docSnap2.data().breakfast.protienTotal,
+          },],   
+            }
+            console.log(objectA);
+           this.dataList = objectA
+           this.desserts=  [
+          {
+            name: [docSnap2.data().breakfast.recipeName].toString(),
+            calories: docSnap2.data().breakfast.totalCalories,
+            fat: docSnap2.data().breakfast.fatsTotal,
+            carbs: docSnap2.data().breakfast.carbTotal,
+            protein: docSnap2.data().breakfast.protienTotal,
+          },]
+          this.dessertsLunch=  [
+          {
+            name: [docSnap2.data().lunch.recipeName].toString(),
+            calories: docSnap2.data().lunch.totalCalories,
+            fat: docSnap2.data().lunch.fatsTotal,
+            carbs: docSnap2.data().lunch.carbTotal,
+            protein: docSnap2.data().lunch.protienTotal,
+          },]
+
+          this.dessertsDinner=  [
+          {
+            name: [docSnap2.data().dinner.recipeName].toString(),
+            calories: docSnap2.data().dinner.totalCalories,
+            fat: docSnap2.data().dinner.fatsTotal,
+            carbs: docSnap2.data().dinner.carbTotal,
+            protein: docSnap2.data().dinner.protienTotal,
+          },]
+
+          this.dessertsSnack=  [
+          {
+            name: [docSnap2.data().snack.recipeName].toString(),
+            calories: docSnap2.data().snack.totalCalories,
+            fat: docSnap2.data().snack.fatsTotal,
+            carbs: docSnap2.data().snack.carbTotal,
+            protein: docSnap2.data().snack.protienTotal,
+          },]
+
+          
         }else{
             console.log('No data on given date for this user')
         }
@@ -272,6 +475,12 @@ import { db as fsdb } from '../fb'
         this.panel = []
       },
     },
+    data () {
+        console.log(dataList);
+      
+        return dataList
+    },
+    
   }
 </script>
 

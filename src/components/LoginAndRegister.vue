@@ -250,9 +250,9 @@ export default {
                         sessionStorage.setItem('isAdmin', docSnap.data().staff);
                         sessionStorage.setItem('isInvestor', docSnap.data().investor);
                         sessionStorage.setItem('isloaded', true);
-                        this.show(false)
                         const redirectionPath =sessionStorage.getItem('redirectPath');
                         this.$router.push(redirectionPath);
+                        this.show(false)
                         
                     } else {
                         console.log("No such document!");

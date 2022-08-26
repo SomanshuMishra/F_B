@@ -95,7 +95,7 @@
                         <v-row class="fill-height">
                             <v-col>
                                 <!-- Set up the actual calendar, so start with a sheet -->
-                                <v-sheet style="padding: 10px 20px ;">
+                                <v-sheet>
                                     <!-- Get a menu when ever you click on an even -->
                                     <template>
                                         <v-row>
@@ -109,9 +109,9 @@
                                                     <v-date-picker
                                                         v-model="dates"
                                                         multiple
-                                                        style="margin: 0px auto;"
+                                                        style="margin: -30px auto;"
                                                         :color="dates.at(1) ? 'green':'yellow'"
-                                                        header-color="primary"
+                                                        header-color="#FFFFFF"
                                                         :allowed-dates="allowedDates"
                                                     ></v-date-picker>
                                                 </v-row>

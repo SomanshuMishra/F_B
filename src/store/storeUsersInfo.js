@@ -1,4 +1,4 @@
-import { doc, getDoc } from "firebase/firestore"; 
+import { doc, getDoc,getDocs,collection,query } from "firebase/firestore"; 
 import { db as fsdb } from '../fb'
 
 export async function storeUserDataLocal(uid){
@@ -37,35 +37,43 @@ async function readFromDB(uid){
     sessionStorage.setItem('uid',uid)
     const docRef = doc(fsdb, 'userData', uid);
     const infoDoc = doc(fsdb, 'userInfo', uid);
-    // const infoCol = query(collection(fsdb, "mealPlans",'8PXKw6RPwgd5TSO0CAj2H4Eec7I2','userMealPlan'))
     console.log(docRef);
     //there is an uncaught (in promise) error here
+    const infoCol = query(collection(fsdb, "mealPlans",uid,'userMealPlan'))
     const docSnap = await getDoc(docRef);
-    // const docSnap1 = await getDocs(infoCol);
-    // var c = []
-    // docSnap1.forEach((x) => {
-    //     console.log('Hello')
-    //     console.log(x.id)
-    //     // const infoCol1 = query(collection(fsdb, "mealPlans",'8PXKw6RPwgd5TSO0CAj2H4Eec7I2','userMealPlan',x.id))
-    //     // const docSnap2 = getDocs(infoCol1)
-    //     c.push(x.id)
+    const docSnap1 = await getDocs(infoCol);
+    var mealDates = []
+    docSnap1.forEach((x) => {
+        // console.log('Hello')
+        // console.log(x.id)
+        // const infoCol1 = query(collection(fsdb, "mealPlans",'8PXKw6RPwgd5TSO0CAj2H4Eec7I2','userMealPlan',x.id))
+        // const docSnap2 = getDocs(infoCol1)
+        mealDates.push(x.id)
 
-    // })
+    })
+    // console.log('vallll->>',mealDates)
+    var groceryDate = []
+    for (let i=0; i<mealDates.length; i++) {
+        console.log(uid)
+        // 8PXKw6RPwgd5TSO0CAj2H4Eec7I2
+        const infoCol1 = doc(fsdb, "mealPlans",uid,'userMealPlan',mealDates[i])
+        const docSnap2 = await getDoc(infoCol1)
 
-    // for (let i=0; i<c.length; i++) {
-    //     console.log(c[0])
-    const infoCol1 = doc(fsdb, "mealPlans",'8PXKw6RPwgd5TSO0CAj2H4Eec7I2','userMealPlan','2022-08-20')
-    const docSnap2 = await getDoc(infoCol1)
-
-    if (docSnap2.exists()) {
-        console.log('exists-->',docSnap2.data())
-    }else{
-        console.Console.log('not exists')
+        if (docSnap2.exists()) {
+            // console.log('grocery_date-->',docSnap2.data().groceryDate)
+            groceryDate.push(docSnap2.data().groceryDate)
+        }else{
+            console.log('not exists')
+        }
     }
-    // }
-    
-
-    console.log(docSnap);
+    console.log('mealDates-->',mealDates)
+    console.log('mealDates-->',groceryDate)
+    sessionStorage.setItem('mealDates',mealDates)
+    sessionStorage.setItem('groceryDate',groceryDate)
+    sessionStorage.getItem('mealDates',mealDates)
+    // console.log('yhhygbjkhbbkj')
+    // console.log( mealDates)
+    // console.log(docSnap);
 
     if (docSnap.exists()) {
         console.log("Document data:", docSnap.data());
@@ -84,6 +92,7 @@ async function readFromDB(uid){
         sessionStorage.setItem('sex', docSnap.data().sex);
         sessionStorage.setItem('weightLb', docSnap.data().weightLb);
         sessionStorage.setItem('age', docSnap.data().age);
+        sessionStorage.setItem('maintenceTarget',docSnap.data().maintenceTarget)
       } else {
         // doc.data() will be undefined in this case
         console.log("No such document!");
